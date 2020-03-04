@@ -12,5 +12,8 @@ namespace WubbaLubStore.Models
     //All Items are prices in Brapples
     public float Price { get; set; }
     public DateTime DateOrdered { get; set; }
+    public int LocationId { get; set; }
+    public Location Location { get; set; }
+
   }
 }
