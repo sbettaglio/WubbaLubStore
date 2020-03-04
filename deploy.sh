@@ -1,7 +1,7 @@
-docker build -t sdg-sample-api-template .
+docker build -t wubba-lub-store .
 
-docker tag sdg-sample-api-template registry.heroku.com/sdg-sample-api-template/web
+docker tag wubba-lub-store registry.heroku.com/wubba-lub-store/web
 
-docker push registry.heroku.com/sdg-sample-api-template/web
+docker push registry.heroku.com/wubba-lub-store/web
 
-heroku container:release web -a sdg-sample-api-template
+heroku container:release web -a wubba-lub-store
