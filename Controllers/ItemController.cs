@@ -15,15 +15,15 @@ namespace WubbaLubStore.Controllers
   {
     public DatabaseContext db { get; set; } = new DatabaseContext();
 
-    [HttpGet]
-    public async Task<ActionResult<List<Item>>> GetAllItems()
+    [HttpGet("location/{locationId}")]
+    public async Task<ActionResult<List<Item>>> GetAllItems(int locationId)
     {
-      return await db.Items.OrderBy(o => o.Name).ToListAsync();
+      return await db.Items.Where(o => o.LocationId == locationId).ToListAsync();
     }
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Item>> GetOneItem(int id)
+    [HttpGet("{id}/{locationId}")]
+    public async Task<ActionResult<Item>> GetOneItem(int id, int locationId)
     {
-      var item = await db.Items.FirstOrDefaultAsync(i => i.Id == id);
+      var item = await db.Items.FirstOrDefaultAsync(i => i.Id == id && i.LocationId == locationId);
       if (item == null)
       {
         return NotFound();
