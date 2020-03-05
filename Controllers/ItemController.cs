@@ -40,25 +40,27 @@ namespace WubbaLubStore.Controllers
       }
       return Ok(item);
     }
-    [HttpPost]
-    public async Task<ActionResult<Item>> CreateNewItem(Item item)
+    [HttpPost("{locationId}")]
+    public async Task<ActionResult<Item>> CreateNewItem(Item item, int locationId)
     {
+      item.LocationId = locationId;
       await db.Items.AddAsync(item);
       await db.SaveChangesAsync();
       return Ok(item);
     }
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Item>> UpdateOneItem(int id, Item newData)
+    [HttpPut("{id}/{locationId}")]
+    public async Task<ActionResult<Item>> UpdateOneItem(int id, int locationId, Item newData)
     {
       newData.Id = id;
+      newData.LocationId = locationId;
       db.Entry(newData).State = EntityState.Modified;
       await db.SaveChangesAsync();
       return Ok(newData);
     }
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteOne(int id)
+    [HttpDelete("{id}/{locationId}")]
+    public async Task<ActionResult> DeleteOne(int id, int locationId)
     {
-      var item = await db.Items.FirstOrDefaultAsync(f => f.Id == id);
+      var item = await db.Items.FirstOrDefaultAsync(f => f.Id == id && f.LocationId == locationId);
       if (item == null)
       {
         return NotFound();
