@@ -31,9 +31,9 @@ namespace WubbaLubStore.Controllers
       return Ok(item);
     }
     [HttpGet("sku/{sku}")]
-    public async Task<ActionResult<Item>> SearchSku(int sku)
+    public async Task<ActionResult<List<Item>>> SearchSku(int sku)
     {
-      var item = await db.Items.FirstOrDefaultAsync(i => i.SKU == sku);
+      var item = await db.Items.Where(i => i.SKU == sku).ToListAsync();
       if (item == null)
       {
         return NotFound();
@@ -79,6 +79,14 @@ namespace WubbaLubStore.Controllers
         outOfStockList.Add(pet.Name);
       }
       return Ok(outOfStockList);
+
+    }
+    [HttpGet("soldout/{locationId}")]
+    public async Task<ActionResult<List<Item>>> OutOfStock(int locationId)
+    {
+      var outOfStock = await db.Items.Where(i => i.LocationId == locationId && i.NumberInStock == 0).ToListAsync();
+
+      return Ok(outOfStock);
 
     }
 
