@@ -22,7 +22,7 @@ namespace WubbaLubStore.Controllers
     }
 
     [HttpPost("{itemId}")]
-    public async Task<ActionResult<Order>> CreateNewOrder(Order order, int itemId)
+    public async Task<ActionResult<List<Order>>> CreateNewOrder(Order order, int itemId)
     {
       var itemInStock = db.Items.FirstOrDefault(i => i.Id == itemId);
       if (itemInStock.NumberInStock < 1)
@@ -32,7 +32,7 @@ namespace WubbaLubStore.Controllers
       else
       {
         await db.Orders.AddAsync(order);
-
+        await db.SaveChangesAsync();
         var orderId = order.Id;
         var itemOrder = new ItemOrder
         {
@@ -41,6 +41,7 @@ namespace WubbaLubStore.Controllers
         };
         await db.ItemOrders.AddAsync(itemOrder);
         await db.SaveChangesAsync();
+        order.ItemOrders = null;
         return Ok(order);
       }
     }
