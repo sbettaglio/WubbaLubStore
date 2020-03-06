@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace WubbaLubStore.Models
 {
@@ -14,6 +15,7 @@ namespace WubbaLubStore.Models
     public DateTime DateOrdered { get; set; }
     public int LocationId { get; set; }
     public Location Location { get; set; }
+    public List<ItemOrder> ItemOrders { get; set; } = new List<ItemOrder>();
 
   }
 }

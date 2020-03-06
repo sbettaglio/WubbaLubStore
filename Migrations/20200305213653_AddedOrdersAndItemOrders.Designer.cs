@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WubbaLubStore.Models;
@@ -9,9 +10,10 @@ using WubbaLubStore.Models;
 namespace WubbaLubStore.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200305213653_AddedOrdersAndItemOrders")]
+    partial class AddedOrdersAndItemOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,12 +66,17 @@ namespace WubbaLubStore.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ItemOrderId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ItemId");
+
+                    b.HasIndex("ItemOrderId");
 
                     b.HasIndex("OrderId");
 
@@ -104,9 +111,6 @@ namespace WubbaLubStore.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("AmountOrdered")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("DatePlaced")
                         .HasColumnType("timestamp without time zone");
 
@@ -138,8 +142,12 @@ namespace WubbaLubStore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WubbaLubStore.Models.Order", "Order")
+                    b.HasOne("WubbaLubStore.Models.ItemOrder", null)
                         .WithMany("ItemOrders")
+                        .HasForeignKey("ItemOrderId");
+
+                    b.HasOne("WubbaLubStore.Models.Order", "Order")
+                        .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
