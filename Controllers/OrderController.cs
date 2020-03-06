@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WubbaLubStore.Models;
 
 namespace WubbaLubStore.Controllers
@@ -13,6 +14,12 @@ namespace WubbaLubStore.Controllers
   public class OrderController : ControllerBase
   {
     public DatabaseContext db { get; set; } = new DatabaseContext();
+
+    [HttpGet]
+    public async Task<ActionResult<List<Order>>> GetAllOrders()
+    {
+      return await db.Orders.OrderBy(o => o.Id).ToListAsync();
+    }
 
     [HttpPost("{itemId}")]
     public async Task<ActionResult<Order>> CreateNewOrder(Order order, int itemId)
@@ -25,7 +32,7 @@ namespace WubbaLubStore.Controllers
       else
       {
         await db.Orders.AddAsync(order);
-        await db.SaveChangesAsync();
+
         var orderId = order.Id;
         var itemOrder = new ItemOrder
         {
@@ -37,6 +44,8 @@ namespace WubbaLubStore.Controllers
         return Ok(order);
       }
     }
+
+
 
   }
 }
