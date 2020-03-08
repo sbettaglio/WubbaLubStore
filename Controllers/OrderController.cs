@@ -34,6 +34,9 @@ namespace WubbaLubStore.Controllers
         return Ok(new { message = "That order is not in our system" });
       }
     }
+
+
+
     [HttpDelete("delete/order/{orderNumber}/{itemId}")]
     public async Task<ActionResult> RemoveItemFromOrder(int orderNumber, int itemId)
     {
@@ -77,6 +80,7 @@ namespace WubbaLubStore.Controllers
         return Ok(order);
       }
     }
+
     [HttpPatch("update/{Id}/add/{amountAdded}")]
     public async Task<ActionResult<Order>> AddToOneOrder(int id, int amountAdded)
     {
@@ -108,9 +112,30 @@ namespace WubbaLubStore.Controllers
       return Ok(new { message = $"Your new order amount is: {orderAmountUpdate.AmountOrdered}" });
 
     }
-
-
-
-
+    [HttpDelete("remove/{orderNumber}")]
+    public async Task<ActionResult> DeleteEntireORder(int orderNumber)
+    {
+      var orderToDelete = db.Orders.Where(f => f.OrderNumber == orderNumber).ToList();
+      if (orderToDelete == null)
+      {
+        return NotFound();
+      }
+      else
+      {
+        foreach (var item in orderToDelete)
+        {
+          var itemOrderLink = db.ItemOrders.FirstOrDefault(o => o.OrderId == item.Id);
+          var itemRestock = db.Items.FirstOrDefault(i => i.Id == itemOrderLink.ItemId);
+          itemRestock.NumberInStock += item.AmountOrdered;
+        }
+        db.Orders.RemoveRange(orderToDelete);
+        await db.SaveChangesAsync();
+        return Ok(new { message = "Order has been updated" });
+      }
+    }
   }
 }
+
+
+
+
