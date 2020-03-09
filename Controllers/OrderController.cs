@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using WubbaLubStore.Models;
 
 namespace WubbaLubStore.Controllers
@@ -33,6 +34,22 @@ namespace WubbaLubStore.Controllers
       {
         return Ok(new { message = "That order is not in our system" });
       }
+    }
+    [HttpGet("location/{locationId}")]
+    public async Task<ActionResult> GetAllOrdersByLocation(int locationId)
+    {
+
+      var locationOrders = await db.Items.Where(i => i.LocationId == locationId).Include(io => io.ItemOrders).ThenInclude(o => o.Order).ToListAsync();
+      return new ContentResult()
+      {
+        Content = JsonConvert.SerializeObject(locationOrders,
+        new JsonSerializerSettings
+        {
+          ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        }),
+        ContentType = "application/json",
+        StatusCode = 200
+      };
     }
 
 
